@@ -5,12 +5,12 @@ export const api = axios.create({
 });
 
 export const getHeader = () => {
-	// const token = localStorage.getItem("token")
-	return {
-		// Authorization: `Bearer ${token}`,
-    'Content-Type': 'multipart/form-data',
-	}
-}
+  // const token = localStorage.getItem("token")
+  return {
+    // Authorization: `Bearer ${token}`,
+    "Content-Type": "multipart/form-data",
+  };
+};
 
 /* This function adds a new room room to the database */
 export async function addRoom(photo, roomType, roomPrice) {
@@ -38,4 +38,49 @@ export async function getRoomTypes() {
     console.log("Error: " + error);
     throw new Error("Error fetching room types");
   }
+}
+
+/* This function gets all room types from the database */
+export async function getAllRooms() {
+  try {
+    const response = await api.get("/rooms/all-rooms");
+    return response.data;
+  } catch (error) {
+    console.log("Error: " + error);
+    throw new Error("Error fetching all rooms");
+  }
+}
+
+/* This function deletes a room by the Id */
+export async function deleteRoom(roomId) {
+  try {
+    const result = await api.delete(`/rooms/delete/room/${roomId}`, {
+      headers: getHeader(),
+    });
+    return result.data;
+  } catch (error) {
+    throw new Error(`Error deleting room ${error.message}`);
+  }
+}
+
+/* This function update a room */
+export async function updateRoom(roomId, roomData) {
+	const formData = new FormData()
+	formData.append("roomType", roomData.roomType)
+	formData.append("roomPrice", roomData.roomPrice)
+	formData.append("photo", roomData.photo)
+	const response = await api.put(`/rooms/update/${roomId}`, formData,{
+		headers: getHeader()
+	})
+	return response
+}
+
+/* This funcction gets a room by the id */
+export async function getRoomById(roomId) {
+	try {
+		const result = await api.get(`/rooms/room/${roomId}`)
+		return result.data
+	} catch (error) {
+		throw new Error(`Error fetching room ${error.message}`)
+	}
 }
